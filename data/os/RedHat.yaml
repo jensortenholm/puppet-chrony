@@ -1,0 +1,19 @@
+---
+chrony::config: '/etc/chrony.conf'
+chrony::package: 'chrony'
+chrony::service: 'chronyd'
+chrony::servers:
+  - hostname: '0.pool.ntp.org'
+    iburst: true
+  - hostname: '1.pool.ntp.org'
+    iburst: true
+  - hostname: '2.pool.ntp.org'
+    iburst: true
+  - hostname: '3.pool.ntp.org'
+    iburst: true
+chrony::driftfile: '/var/lib/chrony/drift'
+chrony::makestep:
+  - 1.0
+  - 3
+chrony::rtcsync: true
+chrony::logdir: '/var/log/chrony'

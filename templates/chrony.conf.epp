@@ -1,0 +1,259 @@
+# chrony configuration - file managed by puppet
+#
+<%# Configure servers %>
+<%# %>
+<%# %>
+<% if $chrony::servers { -%>
+<% $chrony::servers.each |Hash $server| { -%>
+server <%= $server['hostname'] -%>
+<% $server.each |$key, $value| { -%>
+<% if $key != 'hostname' { -%>
+<% if $value =~ Boolean and $value { %> <%= $key %><% } -%>
+<% elsif $value !~ Boolean { %> <%= $key %> <%= $value %><% } -%>
+<% } } -%>
+<% %>
+<% } } -%>
+<%# %>
+<%# %>
+<%# Configure peers %>
+<%# %>
+<%# %>
+<% if $chrony::peers { -%>
+<% $chrony::peers.each |Hash $peer| { -%>
+peer <%= $peer['hostname'] -%>
+<% $peer.each |$key, $value| { -%>
+<% if $key != 'hostname' { -%>
+<% if $value =~ Boolean and $value { %> <%= $key %><% } -%>
+<% elsif $value !~ Boolean { %> <%= $key %> <%= $value %><% } -%>
+<% } } -%>
+<% %>
+<% } } -%>
+<%# %>
+<%# %>
+<%# Configure pools %>
+<%# %>
+<%# %>
+<% if $chrony::pools { -%>
+<% $chrony::pools.each |Hash $pool| { -%>
+pool <%= $pool['hostname'] -%>
+<% $pool.each |$key, $value| { -%>
+<% if $key != 'hostname' { -%>
+<% if $value =~ Boolean and $value { %> <%= $key %><% } -%>
+<% elsif $value !~ Boolean { %> <%= $key %> <%= $value %><% } -%>
+<% } } -%>
+<% %>
+<% } } -%>
+<%# %>
+<%# %>
+<%# Configure initstepslews %>
+<%# %>
+<%# %>
+<% if $chrony::initstepslews { -%>
+<% $chrony::initstepslews.each |Hash $initstepslew| { -%>
+initstepslew <%= $initstepslew['threshold'] %> <%= join($initstepslew['hostnames'], ' ') %>
+<% } } -%>
+<%# %>
+<%# %>
+<%# Configure refclocks %>
+<%# %>
+<%# %>
+<% if $chrony::refclocks { -%>
+<% $chrony::refclocks.each |Hash $refclock| { -%>
+refclock <%= $refclock['driver'] %> <%= $refclock['param'] -%>
+<% if $refclock['driver_options'] { %>:<% -%>
+<% $refclock['driver_options'].each |$key, $value| { -%>
+<% if $value =~ Boolean and $value { %><%= $key %> <% } -%>
+<% elsif $value !~ Boolean { %><%= $key %>=<%= $value %> <% } -%>
+<% } } -%>
+<% else { %> <% } -%>
+<% $refclock.each |$key, $value| { -%>
+<% if $key in ['driver', 'driver_options', 'param'] { next() } -%>
+<% if $value =~ Boolean and $value { %><%= $key %> <% } -%>
+<% elsif $value !~ Boolean { %><%= $key %> <%= $value %> <% } -%>
+<% } -%>
+<% %>
+<% } } -%>
+<%# %>
+<%# %>
+<%# Configure sourceglobals %>
+<%# %>
+<%# %>
+<% if $chrony::manual { -%>manual<% } %>
+<% if $chrony::acquisitionport { %>acquisitionport <%= $chrony::acquisitionport %>
+<% } -%>
+<% if $chrony::bindacqaddress { %>bindacqaddress <%= $chrony::bindacqaddress %>
+<% } -%>
+<% if $chrony::dumpdir { %>dumpdir <%= $chrony::dumpdir %>
+<% } -%>
+<% if $chrony::maxsamples { %>maxsamples <%= $chrony::maxsamples %>
+<% } -%>
+<% if $chrony::minsamples { %>minsamples <%= $chrony::minsamples %>
+<% } -%>
+<% if $chrony::combinelimit { %>combinelimit <%= $chrony::combinelimit %>
+<% } -%>
+<% if $chrony::maxdistance { %>maxdistance <%= $chrony::maxdistance %>
+<% } -%>
+<% if $chrony::maxjitter { %>maxjitter <%= $chrony::maxjitter %>
+<% } -%>
+<% if $chrony::minsources { %>minsources <%= $chrony::minsources %>
+<% } -%>
+<% if $chrony::reselectdist { %>reselectdist <%= $chrony::reselectdist %>
+<% } -%>
+<% if $chrony::stratumweight { %>stratumweight <%= $chrony::stratumweight %>
+<% } -%>
+<% if $chrony::corrtimeratio { %>corrtimeratio <%= $chrony::corrtimeratio %>
+<% } -%>
+<% if $chrony::driftfile { %>driftfile <%= $chrony::driftfile %>
+<% } -%>
+<% if $chrony::fallbackdrift { %>fallbackdrift <%= join($chrony::fallbackdrift, ' ') %>
+<% } -%>
+<% if $chrony::leapsecmode { %>leapsecmode <%= $chrony::leapsecmode %>
+<% } -%>
+<% if $chrony::leapsectz { %>leapsectz <%= $chrony::leapsectz %>
+<% } -%>
+<% if $chrony::makestep { %>makestep <%= join($chrony::makestep, ' ') %>
+<% } -%>
+<% if $chrony::maxchange { %>maxchange <%= join($chrony::maxchange, ' ') %>
+<% } -%>
+<% if $chrony::maxclockerror { %>maxclockerror <%= $chrony::maxclockerror %>
+<% } -%>
+<% if $chrony::maxdrift { %>maxdrift <%= $chrony::maxdrift %>
+<% } -%>
+<% if $chrony::maxupdateskew { %>maxupdateskew <%= $chrony::maxupdateskew %>
+<% } -%>
+<% if $chrony::maxslewrate { %>maxslewrate <%= $chrony::maxslewrate %>
+<% } -%>
+<% if $chrony::tempcomp {
+  if 'T0' in $chrony::tempcomp { -%>
+tempcomp <%= $chrony::tempcomp['file'] %> <%= $chrony::tempcomp['interval'] %> <%= $chrony::tempcomp['T0'] %> <%= $chrony::tempcomp['k0'] %> <%= $chrony::tempcomp['k1'] %> <%= $chrony::tempcomp['k2'] %>
+  <% } elsif 'points-file' in $chrony::tempcomp { -%>
+tempcomp <%= $chrony::tempcomp['file'] %> <%= $chrony::tempcomp['interval'] %> <%= $chrony::tempcomp['points-file'] %>
+  <% } -%>
+<% } %>
+<%# %>
+<%# %>
+<%# Configure global source %>
+<%# %>
+<%# %>
+<% if $chrony::access_rules { -%>
+<% $chrony::access_rules.each |Hash $rule| { -%>
+<%= $rule['access'] -%>
+<% if $rule['all'] { %> all<% } -%>
+<% if $rule['subnet'] { %> <%= $rule['subnet'] -%><% } -%>
+<% %>
+<% } -%>
+<% } -%>
+<% if $chrony::bindaddress_v4 { %>bindaddress <%= $chrony::bindaddress_v4 %>
+<% } -%>
+<% if $chrony::bindaddress_v6 { %>bindaddress <%= $chrony::bindaddress_v6 %>
+<% } -%>
+<% if $chrony::broadcast { -%>
+<% $chrony::broadcast.each |Hash $stmt| { -%>
+broadcast <%= $stmt['interval'] %> <%= $stmt['address'] -%>
+<% if $stmt['port'] { %> <%= $stmt['port'] %><% } -%>
+<% %>
+<% } -%>
+<% } -%>
+<% if $chrony::clientloglimit { %>clientloglimit <%= $chrony::clientloglimit %>
+<% } -%>
+<% if $chrony::noclientlog { %>noclientlog
+<% } -%>
+<% if $chrony::local { -%>
+local<% -%>
+<% if $chrony::local['stratum'] { %> stratum <%= $chrony::local['stratum'] %><% } -%>
+<% if $chrony::local['distance'] { %> distance <%= $chrony::local['distance'] %><% } -%>
+<% if $chrony::local['orphan'] { %> orphan<% } -%>
+<% } %>
+<% if $chrony::port { %>port <%= $chrony::port %>
+<% } -%>
+<% if $chrony::ratelimit { -%>
+ratelimit<% -%>
+<% if $chrony::ratelimit['interval'] { %> interval <%= $chrony::ratelimit['interval'] %><% } -%>
+<% if $chrony::ratelimit['burst'] { %> burst <%= $chrony::ratelimit['burst'] %><% } -%>
+<% if $chrony::ratelimit['leak'] { %> leak <%= $chrony::ratelimit['leak'] %><% } -%>
+<% } -%>
+<% if $chrony::smoothtime { -%>
+smoothtime <%= $chrony::smoothtime['max_freq'] %> <%= $chrony::smoothtime['max_wander'] -%>
+<% if $chrony::smoothtime['leaponly'] { %> leaponly
+<% } -%>
+<% } -%>
+<%# %>
+<%# %>
+<%# Configure command and monitor %>
+<%# %>
+<%# %>
+<% if $chrony::bindcmdaddress_v4 { %>bindcmdaddress <%= $chrony::bindcmdaddress_v4 %>
+<% } -%>
+<% if $chrony::bindcmdaddress_v6 { %>bindcmdaddress <%= $chrony::bindcmdadress_v6 %>
+<% } -%>
+<% if $chrony::bindcmdaddress_sock { %>bindcmdaddress <%= $chrony::bindcmdaddress_sock %>
+<% } -%>
+<% if $chrony::cmdaccess_rules { -%>
+<% $chrony::cmdaccess_rules.each |Hash $rule| { -%>
+<%= $rule['access'] -%>
+<% if $rule['all'] { %> all<% } -%>
+<% if $rule['subnet'] { %> <%= $rule['subnet'] -%><% } -%>
+<% %>
+<% } %>
+<% } -%>
+<% if $chrony::cmdport { %>cmdport <%= $chrony::cmdport %>
+<% } -%>
+<% if $chrony::cmdratelimit { -%>
+cmdratelimit<% -%>
+<% $chrony::cmdratelimit.each |$key, $value| { %> <%= $key %> <%= $value -%><% } -%>
+<% } %>
+<%# %>
+<%# %>
+<%# Configure RTC %>
+<%# %>
+<%# %>
+<% if $chrony::hwclockfile { %>hwclockfile <%= $chrony::hwclockfile %>
+<% } -%>
+<% if $chrony::rtcautotrim { %>rtcautotrim <%= $chrony::rtcautotrimm %>
+<% } -%>
+<% if $chrony::rtcdevice { %>rtcdevice <%= $chrony::rtcdevice %>
+<% } -%>
+<% if $chrony::rtcfile { %>rtcfile <%= $chrony::rtcfile %>
+<% } -%>
+<% if $chrony::rtconutc { %>rtconutc
+<% } -%>
+<% if $chrony::rtcsync { %>rtcsync
+<% } -%>
+<%# %>
+<%# %>
+<%# Configure log %>
+<%# %>
+<%# %>
+<% if $chrony::log { -%>
+log<% -%>
+<% $chrony::log.each |$key, $value| { -%>
+ <%= $key -%>
+<% } -%>
+<% %>
+<% } -%>
+<% if $chrony::logbanner { -%>logbanner <%= $chrony::logbanner %><% } %>
+<% if $chrony::logchange { -%>logchange <%= $chrony::logchange %><% } %>
+<% if $chrony::logdir { -%>logdir <%= $chrony::logdir %><% } %>
+<% if $chrony::mailonchange { -%>
+mailonchange <%= $chrony::mailonchange['email'] %> <%= $chrony::mailonchange['threshold'] %>
+<% } -%>
+<%# %>
+<%# %>
+<%# Configure misc %>
+<%# %>
+<%# %>
+<% if $chrony::include { -%>
+<% $chrony::include.each |Stdlib::Absolutepath $file| { -%>
+include <%= $file %>
+<% } -%>
+<% } -%>
+<% if $chrony::keyfile { -%>keyfile <%= $chrony::keyfile %>
+<% } -%>
+<% if $chrony::lock_all { -%>lock_all
+<% } -%>
+<% if $chrony::pidfile { -%>pidfile <%= $chrony::pidfile %>
+<% } -%>
+<% if $chrony::sched_priority { -%>sched_priority <%= $chrony::sched_priority %>
+<% } -%>
+<% if $chrony::user { -%>user <%= $chrony::user %>
+<% } -%>

@@ -1,0 +1,10 @@
+---
+chrony::servers:
+  - hostname: '0.centos.pool.ntp.org'
+    iburst: true
+  - hostname: '1.centos.pool.ntp.org'
+    iburst: true
+  - hostname: '2.centos.pool.ntp.org'
+    iburst: true
+  - hostname: '3.centos.pool.ntp.org'
+    iburst: true
