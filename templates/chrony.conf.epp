@@ -1,8 +1,8 @@
 # chrony configuration - file managed by puppet
 #
-<%# Configure servers %>
-<%# %>
-<%# %>
+<%# Configure servers -%>
+<%# -%>
+<%# -%>
 <% if $chrony::servers { -%>
 <% $chrony::servers.each |Hash $server| { -%>
 server <%= $server['hostname'] -%>
@@ -13,11 +13,11 @@ server <%= $server['hostname'] -%>
 <% } } -%>
 <% %>
 <% } } -%>
-<%# %>
-<%# %>
-<%# Configure peers %>
-<%# %>
-<%# %>
+<%# -%>
+<%# -%>
+<%# Configure peers -%>
+<%# -%>
+<%# -%>
 <% if $chrony::peers { -%>
 <% $chrony::peers.each |Hash $peer| { -%>
 peer <%= $peer['hostname'] -%>
@@ -28,11 +28,11 @@ peer <%= $peer['hostname'] -%>
 <% } } -%>
 <% %>
 <% } } -%>
-<%# %>
-<%# %>
-<%# Configure pools %>
-<%# %>
-<%# %>
+<%# -%>
+<%# -%>
+<%# Configure pools -%>
+<%# -%>
+<%# -%>
 <% if $chrony::pools { -%>
 <% $chrony::pools.each |Hash $pool| { -%>
 pool <%= $pool['hostname'] -%>
@@ -43,20 +43,20 @@ pool <%= $pool['hostname'] -%>
 <% } } -%>
 <% %>
 <% } } -%>
-<%# %>
-<%# %>
-<%# Configure initstepslews %>
-<%# %>
-<%# %>
+<%# -%>
+<%# -%>
+<%# Configure initstepslews -%>
+<%# -%>
+<%# -%>
 <% if $chrony::initstepslews { -%>
 <% $chrony::initstepslews.each |Hash $initstepslew| { -%>
 initstepslew <%= $initstepslew['threshold'] %> <%= join($initstepslew['hostnames'], ' ') %>
 <% } } -%>
-<%# %>
-<%# %>
-<%# Configure refclocks %>
-<%# %>
-<%# %>
+<%# -%>
+<%# -%>
+<%# Configure refclocks -%>
+<%# -%>
+<%# -%>
 <% if $chrony::refclocks { -%>
 <% $chrony::refclocks.each |Hash $refclock| { -%>
 refclock <%= $refclock['driver'] %> <%= $refclock['param'] -%>
@@ -73,11 +73,11 @@ refclock <%= $refclock['driver'] %> <%= $refclock['param'] -%>
 <% } -%>
 <% %>
 <% } } -%>
-<%# %>
-<%# %>
-<%# Configure sourceglobals %>
-<%# %>
-<%# %>
+<%# -%>
+<%# -%>
+<%# Configure sourceglobals -%>
+<%# -%>
+<%# -%>
 <% if $chrony::manual { -%>manual<% } %>
 <% if $chrony::acquisitionport { %>acquisitionport <%= $chrony::acquisitionport %>
 <% } -%>
@@ -130,11 +130,11 @@ tempcomp <%= $chrony::tempcomp['file'] %> <%= $chrony::tempcomp['interval'] %> <
 tempcomp <%= $chrony::tempcomp['file'] %> <%= $chrony::tempcomp['interval'] %> <%= $chrony::tempcomp['points-file'] %>
   <% } -%>
 <% } %>
-<%# %>
-<%# %>
-<%# Configure global source %>
-<%# %>
-<%# %>
+<%# -%>
+<%# -%>
+<%# Configure global source -%>
+<%# -%>
+<%# -%>
 <% if $chrony::access_rules { -%>
 <% $chrony::access_rules.each |Hash $rule| { -%>
 <%= $rule['access'] -%>
@@ -171,17 +171,17 @@ ratelimit<% -%>
 <% if $chrony::ratelimit['interval'] { %> interval <%= $chrony::ratelimit['interval'] %><% } -%>
 <% if $chrony::ratelimit['burst'] { %> burst <%= $chrony::ratelimit['burst'] %><% } -%>
 <% if $chrony::ratelimit['leak'] { %> leak <%= $chrony::ratelimit['leak'] %><% } -%>
-<% } -%>
+<% } %>
 <% if $chrony::smoothtime { -%>
 smoothtime <%= $chrony::smoothtime['max_freq'] %> <%= $chrony::smoothtime['max_wander'] -%>
 <% if $chrony::smoothtime['leaponly'] { %> leaponly
 <% } -%>
 <% } -%>
-<%# %>
-<%# %>
-<%# Configure command and monitor %>
-<%# %>
-<%# %>
+<%# -%>
+<%# -%>
+<%# Configure command and monitor -%>
+<%# -%>
+<%# -%>
 <% if $chrony::bindcmdaddress_v4 { %>bindcmdaddress <%= $chrony::bindcmdaddress_v4 %>
 <% } -%>
 <% if $chrony::bindcmdaddress_v6 { %>bindcmdaddress <%= $chrony::bindcmdaddress_v6 %>
@@ -202,11 +202,11 @@ smoothtime <%= $chrony::smoothtime['max_freq'] %> <%= $chrony::smoothtime['max_w
 cmdratelimit<% -%>
 <% $chrony::cmdratelimit.each |$key, $value| { %> <%= $key %> <%= $value -%><% } -%>
 <% } %>
-<%# %>
-<%# %>
-<%# Configure RTC %>
-<%# %>
-<%# %>
+<%# -%>
+<%# -%>
+<%# Configure RTC -%>
+<%# -%>
+<%# -%>
 <% if $chrony::hwclockfile { %>hwclockfile <%= $chrony::hwclockfile %>
 <% } -%>
 <% if $chrony::rtcautotrim { %>rtcautotrim <%= $chrony::rtcautotrim %>
@@ -219,11 +219,11 @@ cmdratelimit<% -%>
 <% } -%>
 <% if $chrony::rtcsync { %>rtcsync
 <% } -%>
-<%# %>
-<%# %>
-<%# Configure log %>
-<%# %>
-<%# %>
+<%# -%>
+<%# -%>
+<%# Configure log -%>
+<%# -%>
+<%# -%>
 <% if $chrony::log { -%>
 log<% -%>
 <% $chrony::log.each |$key, $value| { -%>
@@ -237,11 +237,11 @@ log<% -%>
 <% if $chrony::mailonchange { -%>
 mailonchange <%= $chrony::mailonchange['email'] %> <%= $chrony::mailonchange['threshold'] %>
 <% } -%>
-<%# %>
-<%# %>
-<%# Configure misc %>
-<%# %>
-<%# %>
+<%# -%>
+<%# -%>
+<%# Configure misc -%>
+<%# -%>
+<%# -%>
 <% if $chrony::include { -%>
 <% $chrony::include.each |Stdlib::Absolutepath $file| { -%>
 include <%= $file %>
