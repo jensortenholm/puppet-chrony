@@ -4,7 +4,9 @@
   "author": "Jens Örtenholm",
   "summary": "Install and configure the chrony NTP daemon.",
   "license": "Apache-2.0",
-  "source": "https://gitlab.com/jorten/puppet-chrony/",
+  "source": "https://gitlab.com/jorten/puppet-chrony",
+  "project_page": "https://gitlab.com/jorten/puppet-chrony",
+  "issues_url": "https://gitlab.com/jorten/puppet-chrony/issues",
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
