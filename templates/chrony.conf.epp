@@ -184,7 +184,7 @@ smoothtime <%= $chrony::smoothtime['max_freq'] %> <%= $chrony::smoothtime['max_w
 <%# %>
 <% if $chrony::bindcmdaddress_v4 { %>bindcmdaddress <%= $chrony::bindcmdaddress_v4 %>
 <% } -%>
-<% if $chrony::bindcmdaddress_v6 { %>bindcmdaddress <%= $chrony::bindcmdadress_v6 %>
+<% if $chrony::bindcmdaddress_v6 { %>bindcmdaddress <%= $chrony::bindcmdaddress_v6 %>
 <% } -%>
 <% if $chrony::bindcmdaddress_sock { %>bindcmdaddress <%= $chrony::bindcmdaddress_sock %>
 <% } -%>
@@ -209,7 +209,7 @@ cmdratelimit<% -%>
 <%# %>
 <% if $chrony::hwclockfile { %>hwclockfile <%= $chrony::hwclockfile %>
 <% } -%>
-<% if $chrony::rtcautotrim { %>rtcautotrim <%= $chrony::rtcautotrimm %>
+<% if $chrony::rtcautotrim { %>rtcautotrim <%= $chrony::rtcautotrim %>
 <% } -%>
 <% if $chrony::rtcdevice { %>rtcdevice <%= $chrony::rtcdevice %>
 <% } -%>
