@@ -5,9 +5,20 @@ describe 'chrony' do
     context "on #{os}" do
       let(:facts) { os_facts }
 
+      case os_facts[:os]['family']
+      when 'Debian'
+        let(:chrony_conf) { '/etc/chrony/chrony.conf' }
+        let(:chrony_pkg)  { 'chrony' }
+        let(:chrony_svc)  { 'chrony' }
+      when 'RedHat'
+        let(:chrony_conf) { '/etc/chrony.conf' }
+        let(:chrony_pkg)  { 'chrony' }
+        let(:chrony_svc)  { 'chronyd' }
+      end
+
       it { is_expected.to compile.with_all_deps }
       it {
-        is_expected.to contain_file('/etc/chrony.conf').with(
+        is_expected.to contain_file(chrony_conf).with(
           ensure: 'file',
           owner:  'root',
           group:  'root',
@@ -20,7 +31,7 @@ describe 'chrony' do
           let(:params) { { package_ensure: pkg_status } }
 
           it {
-            is_expected.to contain_package('chrony').with(
+            is_expected.to contain_package(chrony_pkg).with(
               ensure: pkg_status,
             )
           }
@@ -32,7 +43,7 @@ describe 'chrony' do
           let(:params) { { service_ensure: svc_status } }
 
           it {
-            is_expected.to contain_service('chronyd').with(
+            is_expected.to contain_service(chrony_svc).with(
               ensure: svc_status,
             )
           }
@@ -44,8 +55,105 @@ describe 'chrony' do
           let(:params) { { service_enable: svc_enable } }
 
           it {
-            is_expected.to contain_service('chronyd').with(
+            is_expected.to contain_service(chrony_svc).with(
               enable: svc_enable,
+            )
+          }
+        end
+      end
+
+      context 'with both noclientlog and ratelimit' do
+        let(:params) do
+          {
+            noclientlog: true,
+            ratelimit: {
+              interval: 1,
+            },
+          }
+        end
+
+        it {
+          is_expected.to compile.with_all_deps.and_raise_error(
+            %r{You can't specify both noclientlog and ratelimit},
+          )
+        }
+      end
+
+      context 'with both rtcfile and rtcsync' do
+        let(:params) do
+          {
+            rtcsync: true,
+            rtcfile: '/path/file',
+          }
+        end
+
+        it {
+          is_expected.to compile.with_all_deps.and_raise_error(
+            %r{You can't specify both rtcfile and rtcsync options},
+          )
+        }
+      end
+
+      if os_facts[:os]['name'] == 'Debian'
+        ['servers', 'pools', 'peers'].each do |resource|
+          ['mindelay', 'asymmetry'].each do |testparam|
+            context "On Debian with resource #{resource} and param #{testparam}" do
+              let(:params) do
+                {
+                  resource.to_s => [
+                    {
+                      hostname: 'test.ntp.org',
+                      testparam.to_s => 5,
+                    },
+                  ],
+                }
+              end
+
+              it {
+                is_expected.to compile.with_all_deps.and_raise_error(
+                  %r{does not support options mindelay and asymmetry},
+                )
+              }
+            end
+          end
+        end
+
+        context 'On Debian with refclock including param width' do
+          let(:params) do
+            {
+              refclocks: [
+                {
+                  driver: 'PPS',
+                  param:  '/dev/pps0',
+                  width: 50,
+                },
+              ],
+            }
+          end
+
+          it {
+            is_expected.to compile.with_all_deps.and_raise_error(
+              %r{does not support options width and pps in refclock},
+            )
+          }
+        end
+
+        context 'On Debian with refclock including param pps' do
+          let(:params) do
+            {
+              refclocks: [
+                {
+                  driver: 'PPS',
+                  param:  '/dev/pps0',
+                  pps:    true,
+                },
+              ],
+            }
+          end
+
+          it {
+            is_expected.to compile.with_all_deps.and_raise_error(
+              %r{does not support options width and pps in refclock},
             )
           }
         end

@@ -227,6 +227,52 @@
 #     ]
 #   }
 #
+# @example Using three pool.ntp.org servers as sources, while serving time to the 192.168.0.0/16 network - except for 192.168.2.0/24.
+#
+#   class { 'chrony':
+#     servers      => [
+#       {
+#         hostname => '0.pool.ntp.org',
+#         iburst   => true,
+#       },
+#       {
+#         hostname => '1.pool.ntp.org',
+#         iburst   => true,
+#       },
+#       {
+#         hostname => '2.pool.ntp.org',
+#         iburst   => true,
+#       },
+#     ],
+#     access_rules => [
+#       {
+#         access => 'deny',
+#         subnet => '192.168.2.',
+#       },
+#       {
+#         access => 'allow',
+#         subnet => '192.168.',
+#       }
+#     ],
+#   }
+#
+# @example Previous example repeated, but with data provided through hiera.
+#
+#   chrony::servers:
+#     - hostname: '0.pool.ntp.org'
+#       iburst:   true
+#     - hostname: '1.pool.ntp.org'
+#       iburst:   true
+#     - hostname: '2.pool.ntp.org'
+#       iburst:   true
+#   chrony::access_rules:
+#     - access: 'deny'
+#       subnet: '192.168.2.'
+#     - access: 'allow'
+#       subnet: '192.168.'
+#
+#   include chrony
+#
 class chrony (
   Enum['absent', 'present']                                        $package_ensure,
   Stdlib::Ensure::Service                                          $service_ensure,
@@ -440,6 +486,35 @@ class chrony (
   Optional[Integer[0,100]]                                         $sched_priority,
   Optional[String]                                                 $user,
 ) {
+  # Check for incompatible options
+  if $noclientlog and $ratelimit {
+    fail("You can't specify both noclientlog and ratelimit options in the same configuration")
+  }
+
+  if $rtcfile and $rtcsync {
+    fail("You can't specify both rtcfile and rtcsync options in the same configuration")
+  }
+
+  # Check for options not supported by the chrony version distributed with Debian 9
+  if $facts['os']['name'] == 'Debian' {
+    $check_hash = any2array($servers) + any2array($peers) + any2array($pools)
+    if $check_hash {
+      $check_hash.each |Hash $hash| {
+        if 'mindelay' in $hash or 'asymmetry' in $hash {
+          fail('Debian does not support options mindelay and asymmetry in server, pool or peer configuration')
+        }
+      }
+    }
+
+    if $refclocks {
+      $refclocks.each |Hash $refclock| {
+        if 'width' in $refclock or 'pps' in $refclock {
+          fail('Debian does not support options width and pps in refclock configuration')
+        }
+      }
+    }
+  }
+
   # Manage chrony package
   package { $package:
     ensure => $package_ensure,

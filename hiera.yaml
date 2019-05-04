@@ -9,8 +9,8 @@ hierarchy:
   - name: 'os'
     path: "os/%{facts.os.name}.yaml"
 
-  - name: 'os-family'
-    path: "os/%{facts.os.family}.yaml"
+  - name: 'osfamily'
+    path: "osfamily/%{facts.os.family}.yaml"
 
   - name: 'common'
     path: 'common.yaml'

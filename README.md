@@ -18,23 +18,24 @@ Installs and configures chrony NTP client/server.
 
 This module sets up the chrony NTP client/server on the system.
 
-Module development has been based on chrony version 3.2 package on CentOS 7.
+Module development has been based on chrony version 3.2.
 
 ## Setup
 
 ### What chrony affects
 
 * Installs chrony package(s).
-* Sets up the chrony configuration file from provided data.
+* Sets up the chrony configuration file from provided data, or using OS default data bundled with module.
 * Manages the chrony service.
 
 ### Setup Requirements
 
+* Supported OS with chrony package available in a configured package repository.
 * puppetlabs/stdlib module.
 
 ### Beginning with chrony
 
-To install and configure chrony as a client with default settings, simply define the class.
+To install and configure chrony as a client with OS default settings, simply define the class.
 
     class { 'chrony': }
 
@@ -44,7 +45,7 @@ To install and configure chrony as a client with default settings, simply define
 
     class { 'chrony': }
 
-#### Installs and configures chrony with specified source servers
+#### Installs and configures chrony with customized source servers
 
     class { 'chrony':
       servers => [
@@ -64,9 +65,55 @@ To install and configure chrony as a client with default settings, simply define
       ]
     }
 
+#### Example using three pool.ntp.org servers as sources, while serving time to the 192.168.0.0/16 network - except for 192.168.2.0/24.
+
+    class { 'chrony':
+      servers      => [
+        {
+          hostname => '0.pool.ntp.org',
+          iburst   => true,
+        },
+        {
+          hostname => '1.pool.ntp.org',
+          iburst   => true,
+        },
+        {
+          hostname => '2.pool.ntp.org',
+          iburst   => true,
+        },
+      ],
+      access_rules => [
+        {
+          access => 'deny',
+          subnet => '192.168.2.',
+        },
+        {
+          access => 'allow',
+          subnet => '192.168.',
+        }
+      ],
+    }
+
+#### Previous example repeated, but with data provided through hiera.
+
+    chrony::servers:
+      - hostname: '0.pool.ntp.org'
+        iburst:   true
+      - hostname: '1.pool.ntp.org'
+        iburst:   true
+      - hostname: '2.pool.ntp.org'
+        iburst:   true
+    chrony::access_rules:
+      - access: 'deny'
+        subnet: '192.168.2.'
+      - access: 'allow'
+        subnet: '192.168.'
+
+    include chrony
+
 ## Limitations
 
-Tested on CentOS 7 only, but should work on any RHEL-clone without issues.
+Tested on CentOS 7, Debian 9, Fedora 29 and Ubuntu 18.04.
 
 ## Development
 

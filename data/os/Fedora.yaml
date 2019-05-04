@@ -1,0 +1,7 @@
+---
+chrony::pools:
+  - hostname: '2.fedora.pool.ntp.org'
+    iburst: true
+chrony::servers:
+chrony::keyfile: '/etc/chrony.keys'
+chrony::leapsectz: 'right/UTC'

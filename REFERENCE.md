@@ -45,6 +45,58 @@ class { 'chrony':
 }
 ```
 
+##### Using three pool.ntp.org servers as sources, while serving time to the 192.168.0.0/16 network - except for 192.168.2.0/24.
+
+```puppet
+
+class { 'chrony':
+  servers      => [
+    {
+      hostname => '0.pool.ntp.org',
+      iburst   => true,
+    },
+    {
+      hostname => '1.pool.ntp.org',
+      iburst   => true,
+    },
+    {
+      hostname => '2.pool.ntp.org',
+      iburst   => true,
+    },
+  ],
+  access_rules => [
+    {
+      access => 'deny',
+      subnet => '192.168.2.',
+    },
+    {
+      access => 'allow',
+      subnet => '192.168.',
+    }
+  ],
+}
+```
+
+##### Previous example repeated, but with data provided through hiera.
+
+```puppet
+
+chrony::servers:
+  - hostname: '0.pool.ntp.org'
+    iburst:   true
+  - hostname: '1.pool.ntp.org'
+    iburst:   true
+  - hostname: '2.pool.ntp.org'
+    iburst:   true
+chrony::access_rules:
+  - access: 'deny'
+    subnet: '192.168.2.'
+  - access: 'allow'
+    subnet: '192.168.'
+
+include chrony
+```
+
 #### Parameters
 
 The following parameters are available in the `chrony` class.
