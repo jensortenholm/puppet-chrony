@@ -23,6 +23,14 @@ group :development do
   gem "json", '= 1.8.1',                               require: false if Gem::Version.new(RUBY_VERSION.dup) == Gem::Version.new('2.1.9')
   gem "json", '= 2.0.4',                               require: false if Gem::Requirement.create('~> 2.4.2').satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem "json", '= 2.1.0',                               require: false if Gem::Requirement.create(['>= 2.5.0', '< 2.7.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
+  gem "puppet",                                        require: false
+  gem "puppetlabs_spec_helper",                        require: false
+  gem "rspec-puppet",                                  require: false
+  gem "rake",                                          require: false
+  gem "beaker-rspec",                                  require: false
+  gem "beaker-vagrant",                                require: false
+  gem "beaker-puppet_install_helper",                  require: false
+  gem "serverspec",                                    require: false
   gem "puppet-module-posix-default-r#{minor_version}", require: false, platforms: [:ruby]
   gem "puppet-module-posix-dev-r#{minor_version}",     require: false, platforms: [:ruby]
   gem "puppet-module-win-default-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
