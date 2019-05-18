@@ -1,0 +1,7 @@
+# chrony keyfile - file managed by puppet
+#
+<% $chrony::keys.each |Hash $key| { -%>
+<%= $key['id'] -%>
+<% if $key['hashalg'] { %> <%= $key['hashalg'] %><% } -%>
+ <%= $key['hash'] %>
+<% } -%>

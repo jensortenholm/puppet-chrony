@@ -26,6 +26,7 @@ Module development has been based on chrony version 3.2.
 
 * Installs chrony package(s).
 * Sets up the chrony configuration file from provided data, or using OS default data bundled with module.
+* Sets up the chrony keyfile from provided data.
 * Manages the chrony service.
 
 ### Setup Requirements
@@ -111,9 +112,27 @@ To install and configure chrony as a client with OS default settings, simply def
 
     include chrony
 
+#### Example as a client but using a key for authentication
+
+    class { 'chrony':
+      servers => [
+        {
+          hostname => 'ntp1.mydomain.tld',
+          key      => 5,
+        }
+      ],
+      keys    => [
+        {
+          id      => 5,
+          hashalg => 'SHA1',
+          hash    => 'HEX:EC56E6FC27CD0C9B5E6B867DD53F137985279B48',
+        }
+      ],
+    }
+
 ## Limitations
 
-Tested on CentOS 7, Debian 9, Fedora 29 and Ubuntu 18.04.
+Tested on CentOS 7, Debian 9, Fedora 29, SLES 15 and Ubuntu 18.04.
 
 ## Development
 

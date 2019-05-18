@@ -20,6 +20,9 @@
 # @param service
 #   Name of the chrony service on the system.
 #
+# @param group
+#   Name of chrony group on the system, used for setting ownership on keyfile.
+#
 # @param servers
 #   Array of NTP servers to configure as sources.
 #
@@ -206,6 +209,9 @@
 # @param user
 #   Sets the name of the user which runs chrony.
 #
+# @param keys
+#   List of keys used for chrony authentication. Populates the chrony keyfile.
+#
 # @example Installs and configures chrony with default settings
 #   class { 'chrony': }
 #
@@ -273,6 +279,24 @@
 #
 #   include chrony
 #
+# @example Example as a client but using a key for authentication
+#
+#   class { 'chrony':
+#     servers => [
+#       {
+#         hostname => 'ntp1.mydomain.tld',
+#         key      => 5,
+#       }
+#     ],
+#     keys    => [
+#       {
+#         id      => 5,
+#         hashalg => 'SHA1',
+#         hash    => 'HEX:EC56E6FC27CD0C9B5E6B867DD53F137985279B48',
+#       }
+#     ],
+#   }
+#
 class chrony (
   Enum['absent', 'present']                                        $package_ensure,
   Stdlib::Ensure::Service                                          $service_ensure,
@@ -280,6 +304,7 @@ class chrony (
   Stdlib::Absolutepath                                             $config,
   String                                                           $package,
   String                                                           $service,
+  String                                                           $group,
   Optional[Array[Struct[{
     hostname         => String,
     iburst           => Optional[Boolean],
@@ -485,6 +510,27 @@ class chrony (
   Optional[Stdlib::Absolutepath]                                   $pidfile,
   Optional[Integer[0,100]]                                         $sched_priority,
   Optional[String]                                                 $user,
+  Optional[Array[Struct[{
+    id      => Integer,
+    hashalg => Optional[Enum[
+                  'MD5',
+                  'SHA1',
+                  'SHA256',
+                  'SHA384',
+                  'SHA512',
+                  'SHA3-224',
+                  'SHA3-256',
+                  'SHA3-384',
+                  'SHA3-512',
+                  'RMD128',
+                  'RMD160',
+                  'RMD256',
+                  'RMD320',
+                  'TIGER',
+                  'WHIRLPOOL',
+                ]],
+    hash    => String,
+  }]]]                                                             $keys,
 ) {
   # Check for incompatible options
   if $noclientlog and $ratelimit {
@@ -529,6 +575,19 @@ class chrony (
     content => epp("${module_name}/chrony.conf.epp"),
     require => Package[$package],
     notify  => Service[$service],
+  }
+
+  # Manage keyfile
+  if $keys and $keyfile {
+    file { $keyfile:
+      ensure  => file,
+      owner   => root,
+      group   => $group,
+      mode    => '0640',
+      content => epp("${module_name}/chrony.keys.epp"),
+      require => Package[$package],
+      notify  => Service[$service],
+    }
   }
 
   # Manage chrony service

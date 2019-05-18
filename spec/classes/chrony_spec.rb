@@ -10,10 +10,14 @@ describe 'chrony' do
         let(:chrony_conf) { '/etc/chrony/chrony.conf' }
         let(:chrony_pkg)  { 'chrony' }
         let(:chrony_svc)  { 'chrony' }
+        let(:chrony_grp)  { 'root' }
+        let(:keyfile)     { '/etc/chrony/chrony.keys' }
       when 'RedHat'
         let(:chrony_conf) { '/etc/chrony.conf' }
         let(:chrony_pkg)  { 'chrony' }
         let(:chrony_svc)  { 'chronyd' }
+        let(:chrony_grp)  { 'chrony' }
+        let(:keyfile)     { '/etc/chrony.keys' }
       end
 
       it { is_expected.to compile.with_all_deps }
@@ -60,6 +64,29 @@ describe 'chrony' do
             )
           }
         end
+      end
+
+      context 'with keys' do
+        let(:params) do
+          {
+            keys: [
+              {
+                'id'      => 5,
+                'hashalg' => 'SHA1',
+                'hash'    => 'HEX:B2C7F9816429F120C2B1C387A4802E07CA3930FA',
+              },
+            ],
+          }
+        end
+
+        it {
+          is_expected.to contain_file(keyfile).with(
+            ensure: 'file',
+            owner:  'root',
+            group:  chrony_grp,
+            mode:   '0640',
+          )
+        }
       end
 
       context 'with both noclientlog and ratelimit' do

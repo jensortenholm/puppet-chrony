@@ -13,22 +13,23 @@ describe 'chrony class' do
       }
     EOS
   end
+
   servicename =
     case fact('osfamily')
     when 'RedHat'
+      'chronyd'
+    when 'Suse'
       'chronyd'
     else
       'chrony'
     end
 
-  it 'should apply with no errors' do
-    result = apply_manifest(manifest, :catch_failures => true)
-    expect(@result.exit_code).to eq 2
+  it 'applies with no errors' do
+    expect(apply_manifest(manifest, catch_failures: true).exit_code).to eq 2
   end
 
-  it 'should apply a second time without changes' do
-    result = apply_manifest(manifest, :catch_failures => true)
-    expect(@result.exit_code).to eq 0
+  it 'applies a second time without changes' do
+    expect(apply_manifest(manifest, catch_failures: true).exit_code).to be_zero
   end
 
   describe package('chrony') do

@@ -2,6 +2,7 @@
 chrony::config: '/etc/chrony.conf'
 chrony::package: 'chrony'
 chrony::service: 'chronyd'
+chrony::group: 'chrony'
 chrony::servers:
   - hostname: '0.pool.ntp.org'
     iburst: true
@@ -17,3 +18,4 @@ chrony::makestep:
   - 3
 chrony::rtcsync: true
 chrony::logdir: '/var/log/chrony'
+chrony::keyfile: '/etc/chrony.keys'

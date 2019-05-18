@@ -97,6 +97,27 @@ chrony::access_rules:
 include chrony
 ```
 
+##### Example as a client but using a key for authentication
+
+```puppet
+
+class { 'chrony':
+  servers => [
+    {
+      hostname => 'ntp1.mydomain.tld',
+      key      => 5,
+    }
+  ],
+  keys    => [
+    {
+      id      => 5,
+      hashalg => 'SHA1',
+      hash    => 'HEX:EC56E6FC27CD0C9B5E6B867DD53F137985279B48',
+    }
+  ],
+}
+```
+
 #### Parameters
 
 The following parameters are available in the `chrony` class.
@@ -136,6 +157,12 @@ Name of the chrony package to install.
 Data type: `String`
 
 Name of the chrony service on the system.
+
+##### `group`
+
+Data type: `String`
+
+Name of chrony group on the system, used for setting ownership on keyfile.
 
 ##### `servers`
 
@@ -651,4 +678,30 @@ Configures the scheduling priority. See chrony.conf man-page for details of use.
 Data type: `Optional[String]`
 
 Sets the name of the user which runs chrony.
+
+##### `keys`
+
+Data type: `Optional[Array[Struct[{
+    id      => Integer,
+    hashalg => Optional[Enum[
+                  'MD5',
+                  'SHA1',
+                  'SHA256',
+                  'SHA384',
+                  'SHA512',
+                  'SHA3-224',
+                  'SHA3-256',
+                  'SHA3-384',
+                  'SHA3-512',
+                  'RMD128',
+                  'RMD160',
+                  'RMD256',
+                  'RMD320',
+                  'TIGER',
+                  'WHIRLPOOL',
+                ]],
+    hash    => String,
+  }]]]`
+
+List of keys used for chrony authentication. Populates the chrony keyfile.
 

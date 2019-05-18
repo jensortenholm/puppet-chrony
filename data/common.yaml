@@ -2,6 +2,7 @@
 chrony::package_ensure: 'present'
 chrony::service_ensure: 'running'
 chrony::service_enable: true
+chrony::group: 'root'
 chrony::servers: ~
 chrony::peers: ~
 chrony::pools: ~
@@ -64,3 +65,4 @@ chrony::lock_all: false
 chrony::pidfile: ~
 chrony::sched_priority: ~
 chrony::user: ~
+chrony::keys: ~

@@ -1,6 +1,6 @@
 {
   "name": "jorten-chrony",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "Jens Örtenholm",
   "summary": "Install and configure the chrony NTP daemon.",
   "license": "Apache-2.0",
@@ -54,6 +54,12 @@
       "operatingsystem": "Fedora",
       "operatingsystemrelease": [
         "29"
+      ]
+    },
+    {
+      "operatingsystem": "SLES",
+      "operatingsystemrelease": [
+        "15"
       ]
     }
   ],
