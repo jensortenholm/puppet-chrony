@@ -66,3 +66,5 @@ chrony::pidfile: ~
 chrony::sched_priority: ~
 chrony::user: ~
 chrony::keys: ~
+chrony::ntpsigndsocket: ~
+chrony::hwtimestamp: ~

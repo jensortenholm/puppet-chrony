@@ -209,8 +209,14 @@
 # @param user
 #   Sets the name of the user which runs chrony.
 #
+# @param ntpsigndsocket
+#   Complete path to the Samba ntp_signd socket. See chrony.conf man-page for details of use.
+#
 # @param keys
 #   List of keys used for chrony authentication. Populates the chrony keyfile.
+#
+# @param hwtimestamp
+#   Array of hwtimestamp configurations, one entry per interface. See chrony.conf man-page for details of use.
 #
 # @example Installs and configures chrony with default settings
 #   class { 'chrony': }
@@ -315,8 +321,8 @@ class chrony (
     trust            => Optional[Boolean],
     require          => Optional[Boolean],
     xleave           => Optional[Boolean],
-    minpoll          => Optional[Integer[-4, 24]],
-    maxpoll          => Optional[Integer[0, 24]],
+    minpoll          => Optional[Integer[-6, 24]],
+    maxpoll          => Optional[Integer[-6, 24]],
     key              => Optional[Integer],
     maxdelay         => Optional[Variant[Float[0.0, 1000],Integer[0, 1000]]],
     maxdelayratio    => Optional[Variant[Float,Integer]],
@@ -331,6 +337,7 @@ class chrony (
     presend          => Optional[Integer],
     minstratum       => Optional[Integer],
     version          => Optional[Integer],
+    burst            => Optional[Boolean],
   }]]]                                                             $servers,
   Optional[Array[Struct[{
     hostname         => String,
@@ -342,8 +349,8 @@ class chrony (
     trust            => Optional[Boolean],
     require          => Optional[Boolean],
     xleave           => Optional[Boolean],
-    minpoll          => Optional[Integer[-4, 24]],
-    maxpoll          => Optional[Integer[0, 24]],
+    minpoll          => Optional[Integer[-6, 24]],
+    maxpoll          => Optional[Integer[-6, 24]],
     key              => Optional[Integer],
     maxdelay         => Optional[Variant[Float[0.0, 1000],Integer[0, 1000]]],
     maxdelayratio    => Optional[Variant[Float,Integer]],
@@ -358,6 +365,7 @@ class chrony (
     presend          => Optional[Integer],
     minstratum       => Optional[Integer],
     version          => Optional[Integer],
+    burst            => Optional[Boolean],
   }]]]                                                             $peers,
   Optional[Array[Struct[{
     hostname         => String,
@@ -369,8 +377,8 @@ class chrony (
     trust            => Optional[Boolean],
     require          => Optional[Boolean],
     xleave           => Optional[Boolean],
-    minpoll          => Optional[Integer[-4, 24]],
-    maxpoll          => Optional[Integer[0, 24]],
+    minpoll          => Optional[Integer[-6, 24]],
+    maxpoll          => Optional[Integer[-6, 24]],
     key              => Optional[Integer],
     maxdelay         => Optional[Variant[Float[0.0, 1000],Integer[0, 1000]]],
     maxdelayratio    => Optional[Variant[Float,Integer]],
@@ -386,6 +394,7 @@ class chrony (
     minstratum       => Optional[Integer],
     version          => Optional[Integer],
     maxsources       => Optional[Integer],
+    burst            => Optional[Boolean],
   }]]]                                                             $pools,
   Optional[Array[Struct[{
     hostnames => Array[String],
@@ -414,6 +423,8 @@ class chrony (
     require        => Optional[Boolean],
     minsamples     => Optional[Integer],
     maxsamples     => Optional[Integer],
+    stratum        => Optional[Integer],
+    tai            => Optional[Boolean],
   }]]]                                                             $refclocks,
   Optional[Boolean]                                                $manual,
   Optional[Stdlib::Port]                                           $acquisitionport,
@@ -460,7 +471,7 @@ class chrony (
   }]]                                                              $local,
   Optional[Stdlib::Port]                                           $port,
   Optional[Struct[{
-    interval => Optional[Integer[-4,12]],
+    interval => Optional[Integer[-19,12]],
     burst    => Optional[Integer[1,255]],
     leak     => Optional[Integer[1,4]],
   }]]                                                              $ratelimit,
@@ -479,7 +490,7 @@ class chrony (
   }]]]                                                             $cmdaccess_rules,
   Optional[Stdlib::Port]                                           $cmdport,
   Optional[Struct[{
-    interval => Optional[Integer[-4,12]],
+    interval => Optional[Integer[-19,12]],
     burst    => Optional[Integer[1,255]],
     leak     => Optional[Integer[1,4]],
   }]]                                                              $cmdratelimit,
@@ -490,12 +501,13 @@ class chrony (
   Optional[Boolean]                                                $rtconutc,
   Optional[Boolean]                                                $rtcsync,
   Optional[Struct[{
-    measurements => Optional[Boolean],
-    statistics   => Optional[Boolean],
-    tracking     => Optional[Boolean],
-    rtc          => Optional[Boolean],
-    refclocks    => Optional[Boolean],
-    tempcomp     => Optional[Boolean],
+    measurements    => Optional[Boolean],
+    statistics      => Optional[Boolean],
+    tracking        => Optional[Boolean],
+    rtc             => Optional[Boolean],
+    refclocks       => Optional[Boolean],
+    tempcomp        => Optional[Boolean],
+    rawmeasurements => Optional[Boolean],
   }]]                                                              $log,
   Optional[Integer]                                                $logbanner,
   Optional[Variant[Float,Integer]]                                 $logchange,
@@ -510,6 +522,7 @@ class chrony (
   Optional[Stdlib::Absolutepath]                                   $pidfile,
   Optional[Integer[0,100]]                                         $sched_priority,
   Optional[String]                                                 $user,
+  Optional[Stdlib::Absolutepath]                                   $ntpsigndsocket,
   Optional[Array[Struct[{
     id      => Integer,
     hashalg => Optional[Enum[
@@ -531,6 +544,15 @@ class chrony (
                 ]],
     hash    => String,
   }]]]                                                             $keys,
+  Optional[Array[Struct[{
+    interface  => String,
+    minpoll    => Optional[Integer],
+    precision  => Optional[String],
+    txcomp     => Optional[Integer],
+    rxcomp     => Optional[Integer],
+    nocrossts  => Optional[Boolean],
+    rxfilter   => Optional[Enum['all', 'ntp', 'none']],
+  }]]]                                                             $hwtimestamp,
 ) {
   # Check for incompatible options
   if $noclientlog and $ratelimit {
@@ -539,26 +561,6 @@ class chrony (
 
   if $rtcfile and $rtcsync {
     fail("You can't specify both rtcfile and rtcsync options in the same configuration")
-  }
-
-  # Check for options not supported by the chrony version distributed with Debian 9
-  if $facts['os']['name'] == 'Debian' {
-    $check_hash = any2array($servers) + any2array($peers) + any2array($pools)
-    if $check_hash {
-      $check_hash.each |Hash $hash| {
-        if 'mindelay' in $hash or 'asymmetry' in $hash {
-          fail('Debian does not support options mindelay and asymmetry in server, pool or peer configuration')
-        }
-      }
-    }
-
-    if $refclocks {
-      $refclocks.each |Hash $refclock| {
-        if 'width' in $refclock or 'pps' in $refclock {
-          fail('Debian does not support options width and pps in refclock configuration')
-        }
-      }
-    }
   }
 
   # Manage chrony package

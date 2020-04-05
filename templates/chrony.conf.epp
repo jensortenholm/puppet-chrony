@@ -164,6 +164,8 @@ local<% -%>
 <% if $chrony::local['distance'] { %> distance <%= $chrony::local['distance'] %><% } -%>
 <% if $chrony::local['orphan'] { %> orphan<% } -%>
 <% } %>
+<% if $chrony::ntpsigndsocket { %>ntpsigndsocket <%= $chrony::ntpsigndsocket %>
+<% } -%>
 <% if $chrony::port { %>port <%= $chrony::port %>
 <% } -%>
 <% if $chrony::ratelimit { -%>
@@ -236,6 +238,17 @@ log<% -%>
 <% if $chrony::logdir { -%>logdir <%= $chrony::logdir %><% } %>
 <% if $chrony::mailonchange { -%>
 mailonchange <%= $chrony::mailonchange['email'] %> <%= $chrony::mailonchange['threshold'] %>
+<% } -%>
+<% if $chrony::hwtimestamp { -%>
+<% $chrony::hwtimestamp.each |Hash $hwtimestamp| {-%>
+hwtimestamp <%= $hwtimestamp['interface'] -%>
+<% $hwtimestamp.each |$key, $value| { -%>
+<% if $key != 'interface' { -%>
+<% if $value =~ Boolean and $value { %> <%= $key %><% } -%>
+<% elsif $value !~ Boolean { %> <%= $key %> <%= $value %><% } -%>
+<% } } -%>
+<% %>
+<% } -%>
 <% } -%>
 <%# -%>
 <%# -%>

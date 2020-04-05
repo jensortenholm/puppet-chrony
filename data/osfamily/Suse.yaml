@@ -11,3 +11,5 @@ chrony::makestep:
   - 3
 chrony::rtcsync: true
 chrony::logdir: '/var/log/chrony'
+chrony::keyfile: '/etc/chrony.keys'
+chrony::group: 'chrony'

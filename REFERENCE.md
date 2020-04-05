@@ -176,8 +176,8 @@ Data type: `Optional[Array[Struct[{
     trust            => Optional[Boolean],
     require          => Optional[Boolean],
     xleave           => Optional[Boolean],
-    minpoll          => Optional[Integer[-4, 24]],
-    maxpoll          => Optional[Integer[0, 24]],
+    minpoll          => Optional[Integer[-6, 24]],
+    maxpoll          => Optional[Integer[-6, 24]],
     key              => Optional[Integer],
     maxdelay         => Optional[Variant[Float[0.0, 1000],Integer[0, 1000]]],
     maxdelayratio    => Optional[Variant[Float,Integer]],
@@ -192,6 +192,7 @@ Data type: `Optional[Array[Struct[{
     presend          => Optional[Integer],
     minstratum       => Optional[Integer],
     version          => Optional[Integer],
+    burst            => Optional[Boolean],
   }]]]`
 
 Array of NTP servers to configure as sources.
@@ -208,8 +209,8 @@ Data type: `Optional[Array[Struct[{
     trust            => Optional[Boolean],
     require          => Optional[Boolean],
     xleave           => Optional[Boolean],
-    minpoll          => Optional[Integer[-4, 24]],
-    maxpoll          => Optional[Integer[0, 24]],
+    minpoll          => Optional[Integer[-6, 24]],
+    maxpoll          => Optional[Integer[-6, 24]],
     key              => Optional[Integer],
     maxdelay         => Optional[Variant[Float[0.0, 1000],Integer[0, 1000]]],
     maxdelayratio    => Optional[Variant[Float,Integer]],
@@ -224,6 +225,7 @@ Data type: `Optional[Array[Struct[{
     presend          => Optional[Integer],
     minstratum       => Optional[Integer],
     version          => Optional[Integer],
+    burst            => Optional[Boolean],
   }]]]`
 
 Array of NTP servers to configure as peers.
@@ -240,8 +242,8 @@ Data type: `Optional[Array[Struct[{
     trust            => Optional[Boolean],
     require          => Optional[Boolean],
     xleave           => Optional[Boolean],
-    minpoll          => Optional[Integer[-4, 24]],
-    maxpoll          => Optional[Integer[0, 24]],
+    minpoll          => Optional[Integer[-6, 24]],
+    maxpoll          => Optional[Integer[-6, 24]],
     key              => Optional[Integer],
     maxdelay         => Optional[Variant[Float[0.0, 1000],Integer[0, 1000]]],
     maxdelayratio    => Optional[Variant[Float,Integer]],
@@ -257,6 +259,7 @@ Data type: `Optional[Array[Struct[{
     minstratum       => Optional[Integer],
     version          => Optional[Integer],
     maxsources       => Optional[Integer],
+    burst            => Optional[Boolean],
   }]]]`
 
 Array of NTP server pools to configure.
@@ -295,6 +298,8 @@ Data type: `Optional[Array[Struct[{
     require        => Optional[Boolean],
     minsamples     => Optional[Integer],
     maxsamples     => Optional[Integer],
+    stratum        => Optional[Integer],
+    tai            => Optional[Boolean],
   }]]]`
 
 Array of reference clock configurations.
@@ -506,7 +511,7 @@ Sets the port on which chrony will listen for NTP requests.
 ##### `ratelimit`
 
 Data type: `Optional[Struct[{
-    interval => Optional[Integer[-4,12]],
+    interval => Optional[Integer[-19,12]],
     burst    => Optional[Integer[1,255]],
     leak     => Optional[Integer[1,4]],
   }]]`
@@ -560,7 +565,7 @@ Configures the port chrony will listen on for command packets.
 ##### `cmdratelimit`
 
 Data type: `Optional[Struct[{
-    interval => Optional[Integer[-4,12]],
+    interval => Optional[Integer[-19,12]],
     burst    => Optional[Integer[1,255]],
     leak     => Optional[Integer[1,4]],
   }]]`
@@ -606,12 +611,13 @@ Configures chrony to periodically copy system time to the RTC.
 ##### `log`
 
 Data type: `Optional[Struct[{
-    measurements => Optional[Boolean],
-    statistics   => Optional[Boolean],
-    tracking     => Optional[Boolean],
-    rtc          => Optional[Boolean],
-    refclocks    => Optional[Boolean],
-    tempcomp     => Optional[Boolean],
+    measurements    => Optional[Boolean],
+    statistics      => Optional[Boolean],
+    tracking        => Optional[Boolean],
+    rtc             => Optional[Boolean],
+    refclocks       => Optional[Boolean],
+    tempcomp        => Optional[Boolean],
+    rawmeasurements => Optional[Boolean],
   }]]`
 
 Configures chrony logging behaviour. See chrony.conf man-page for details of use.
@@ -679,6 +685,12 @@ Data type: `Optional[String]`
 
 Sets the name of the user which runs chrony.
 
+##### `ntpsigndsocket`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+Complete path to the Samba ntp_signd socket. See chrony.conf man-page for details of use.
+
 ##### `keys`
 
 Data type: `Optional[Array[Struct[{
@@ -704,4 +716,18 @@ Data type: `Optional[Array[Struct[{
   }]]]`
 
 List of keys used for chrony authentication. Populates the chrony keyfile.
+
+##### `hwtimestamp`
+
+Data type: `Optional[Array[Struct[{
+    interface  => String,
+    minpoll    => Optional[Integer],
+    precision  => Optional[String],
+    txcomp     => Optional[Integer],
+    rxcomp     => Optional[Integer],
+    nocrossts  => Optional[Boolean],
+    rxfilter   => Optional[Enum['all', 'ntp', 'none']],
+  }]]]`
+
+Array of hwtimestamp configurations, one entry per interface. See chrony.conf man-page for details of use.
 

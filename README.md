@@ -18,7 +18,7 @@ Installs and configures chrony NTP client/server.
 
 This module sets up the chrony NTP client/server on the system.
 
-Module development has been based on chrony version 3.2.
+Module development has been based on chrony versions 3.2 - 3.5.
 
 ## Setup
 
@@ -132,7 +132,7 @@ To install and configure chrony as a client with OS default settings, simply def
 
 ## Limitations
 
-Tested on CentOS 7, Debian 9, Fedora 29, SLES 15 and Ubuntu 18.04.
+Tested on CentOS 7 and 8, Debian 9, Fedora 29, SLES 15 and Ubuntu 18.04.
 
 ## Development
 

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+** Release 0.4.0
+
+**Features**
+
+* Added support and new parameters for CentOS 8.
+
 ** Release 0.3.0
 
 **Features**
