@@ -12,5 +12,8 @@ hierarchy:
   - name: 'osfamily'
     path: "osfamily/%{facts.os.family}.yaml"
 
+  - name: "Virtualization platform"
+    path: "virtual/%{facts.virtual}.yaml"
+
   - name: 'common'
     path: 'common.yaml'
