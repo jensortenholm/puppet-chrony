@@ -1,6 +1,6 @@
 {
   "name": "jorten-chrony",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": "Jens Örtenholm",
   "summary": "Install and configure the chrony NTP daemon.",
   "license": "Apache-2.0",

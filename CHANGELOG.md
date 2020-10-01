@@ -2,13 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
-** Release 0.4.0
+## Release 0.4.1
+
+Merged pull requests:
+
+* Do not enable and start chrony when running under a lxd, lxc or openvz container [\#1](https://github.com/jensortenholm/puppet-chrony/pull/1) ([jflandry](https://github.com/jflandry))
+
+## Release 0.4.0
 
 **Features**
 
 * Added support and new parameters for CentOS 8.
 
-** Release 0.3.0
+## Release 0.3.0
 
 **Features**
 
