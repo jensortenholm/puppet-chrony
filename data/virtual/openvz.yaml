@@ -1,1 +1,4 @@
-lxc.yaml
+---
+chrony::service_ensure: 'stopped'
+chrony::service_enable: false
+#  Clock synchronisation is not supported on lxd/lxc/openvz containers
