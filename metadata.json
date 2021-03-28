@@ -1,6 +1,6 @@
 {
   "name": "jorten-chrony",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "author": "Jens Örtenholm",
   "summary": "Install and configure the chrony NTP daemon.",
   "license": "Apache-2.0",
@@ -10,7 +10,7 @@
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
-      "version_requirement": ">= 4.13.0 < 7.0.0"
+      "version_requirement": ">= 4.13.0 < 8.0.0"
     }
   ],
   "operatingsystem_support": [
@@ -45,35 +45,25 @@
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "18.04"
-      ]
-    },
-    {
-      "operatingsystem": "Fedora",
-      "operatingsystemrelease": [
-        "29"
-      ]
-    },
-    {
-      "operatingsystem": "SLES",
-      "operatingsystemrelease": [
-        "15"
+        "18.04",
+        "20.04"
       ]
     }
   ],
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.10.0 < 7.0.0"
+      "version_requirement": ">= 4.10.0 < 8.0.0"
     }
   ],
-  "pdk-version": "1.18.1",
-  "template-url": "pdk-default#1.18.1",
-  "template-ref": "tags/1.18.1-0-g3d2e75c"
+  "pdk-version": "2.0.0",
+  "template-url": "pdk-default#2.0.0",
+  "template-ref": "tags/2.0.0-0-ge838f1d"
 }

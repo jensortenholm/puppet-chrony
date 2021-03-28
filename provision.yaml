@@ -1,0 +1,22 @@
+---
+centos:
+  provisioner: vagrant
+  images:
+  - centos/8
+  - centos/7
+  params:
+    vagrant_provider: libvirt
+debian:
+  provisioner: vagrant
+  images:
+  - roboxes/debian9
+  - roboxes/debian10
+  params:
+    vagrant_provider: libvirt
+ubuntu:
+  provisioner: vagrant
+  images:
+  - roboxes/ubuntu1804
+  - roboxes/ubuntu2004
+  params:
+    vagrant_provider: libvirt

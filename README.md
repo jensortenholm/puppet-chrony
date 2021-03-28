@@ -132,7 +132,7 @@ To install and configure chrony as a client with OS default settings, simply def
 
 ## Limitations
 
-Tested on CentOS 7 and 8, Debian 9, Fedora 29, SLES 15 and Ubuntu 18.04.
+Tested on CentOS 7 and 8, Debian 9 and 10, and Ubuntu 18.04 aswell as 20.04.
 
 ## Development
 

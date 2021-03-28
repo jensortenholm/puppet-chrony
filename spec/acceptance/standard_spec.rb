@@ -15,7 +15,7 @@ describe 'chrony class' do
   end
 
   servicename =
-    case fact('osfamily')
+    case host_inventory['facter']['os']['family']
     when 'RedHat'
       'chronyd'
     when 'Suse'
@@ -24,12 +24,8 @@ describe 'chrony class' do
       'chrony'
     end
 
-  it 'applies with no errors' do
-    expect(apply_manifest(manifest, catch_failures: true).exit_code).to eq 2
-  end
-
-  it 'applies a second time without changes' do
-    expect(apply_manifest(manifest, catch_failures: true).exit_code).to be_zero
+  it 'applies idempotently' do
+    idempotent_apply(manifest)
   end
 
   describe package('chrony') do

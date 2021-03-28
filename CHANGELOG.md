@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.5.0
+
+* Litmus acceptance tests.
+* Tested with Puppet 7-series.
+* Updated supported OS list.
+
 ## Release 0.4.1
 
 Merged pull requests:
